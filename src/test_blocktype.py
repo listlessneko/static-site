@@ -1,5 +1,5 @@
 import unittest
-from blocktype import BlockType, block_to_block_type, markdown_to_blocks
+from blocktype import BlockType, block_to_block_type, markdown_to_blocks, markdown_to_html_node
 
 class TestBlockType(unittest.TestCase):
     def test_block_to_block_type_paragraph(self):
@@ -158,6 +158,79 @@ This is the same paragraph on a new line
             ],
         )
 
+    def test_markdown_to_html_headings(self):
+        md = """
+# This is a heading
+
+## This too is a heading
+
+### This tree is a heading
+
+#### This four is a heading
+
+##### This five is a heading
+
+###### This six is a heading
+
+####### This seven is not a heading.
+        """
+
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+        self.assertEqual(
+            html,
+            "<div><h1>This is a heading</h1><h2>This too is a heading</h2><h3>This tree is a heading</h3><h4>This four is a heading</h4><h5>This five is a heading</h5><h6>This six is a heading</h6><p>####### This seven is not a heading.</p></div>",
+        )
+
+    def test_markdown_to_html_headings_and_paragraphs(self):
+        md = """
+# This is a title
+
+With a paragraph talking about stuff.
+
+## This section is important
+
+With **very important** _stuff_ to talk about.
+        """
+
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+        self.assertEqual(
+            html,
+            "<div><h1>This is a title</h1><p>With a paragraph talking about stuff.</p><h2>This section is important</h2><p>With <b>very important</b> <i>stuff</i> to talk about.</p></div>",
+        )
+
+    def test_markdown_to_html_paragraphs(self):
+        md = """
+This is **bolded** paragraph
+text in a p
+tag here
+
+This is another paragraph with _italic_ text and `code` here
+
+    """
+
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+        self.assertEqual(
+            html,
+            "<div><p>This is <b>bolded</b> paragraph text in a p tag here</p><p>This is another paragraph with <i>italic</i> text and <code>code</code> here</p></div>",
+        )
+
+    def test_markdown_to_html_codeblock(self):
+        md = """
+```
+This is text that _should_ remain
+the **same** even with inline stuff
+```
+    """
+
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+        self.assertEqual(
+            html,
+            "<div><pre><code>This is text that _should_ remain\nthe **same** even with inline stuff\n</code></pre></div>",
+        )
 
 if __name__ == "__main__":
     unittest.main()
