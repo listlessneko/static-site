@@ -1,5 +1,10 @@
 import unittest
-from blocktype import BlockType, block_to_block_type, markdown_to_blocks, markdown_to_html_node
+from markdown_blocks import (
+        BlockType,
+        block_to_block_type,
+        markdown_to_blocks,
+        markdown_to_html_node
+)
 
 class TestBlockType(unittest.TestCase):
     def test_block_to_block_type_paragraph(self):
