@@ -1,3 +1,4 @@
+import sys
 import os
 import shutil
 from copystatic import (
@@ -6,38 +7,21 @@ from copystatic import (
 from gencontent import (
         generate_pages_recursively
 )
-from markdown_blocks import (
-        BlockType,
-    block_to_block_type,
-    markdown_to_blocks,
-    markdown_to_html_node
-)
-from textnode import (
-        TextNode,
-        TextType
-)
-from htmlnode import (
-        HTMLNode
-)
 
-PUBLIC_PATH = "./public/"
+BASE_PATH = sys.argv[1]
+DEST_PATH = "./docs/"
 STATIC_PATH = "./static/"
 CONTENT_PATH = "./content/"
 TEMPLATE_PATH = "template.html"
-PUBLIC_INDEX_HTML_PATH = "./public/index.html"
 
 def main():
-    textnode = TextNode('This is some anchor text.', TextType.LINK, 'https://www.boot.dev')
-    print(textnode)
+    print(f"Refreshing {DEST_PATH}...")
+    if os.path.exists(DEST_PATH):
+        shutil.rmtree(DEST_PATH)
+    os.mkdir(DEST_PATH)
 
-    htmlnode = HTMLNode('test tag', 'test value', ['children'], {"href": "https://www.boot.dev", "target": "_blank"})
-    print(htmlnode)
-
-    if os.path.exists(PUBLIC_PATH):
-        shutil.rmtree(PUBLIC_PATH)
-    os.mkdir(PUBLIC_PATH)
-
-    copy_files_recursively(STATIC_PATH, PUBLIC_PATH)
-    generate_pages_recursively(CONTENT_PATH, TEMPLATE_PATH, PUBLIC_PATH)
+    print(f"Copying static files to public directory...")
+    copy_files_recursively(STATIC_PATH, DEST_PATH)
+    generate_pages_recursively(CONTENT_PATH, TEMPLATE_PATH, DEST_PATH, BASE_PATH)
 
 main()
